@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
+  devise_for :users
   # Routes for the Like resource:
+  root to: "users#index"
+
 
   # CREATE
   post("/insert_like", { :controller => "likes", :action => "create" })

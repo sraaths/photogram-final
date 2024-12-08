@@ -65,4 +65,12 @@ class UsersController < ApplicationController
 
     redirect_to("/users", { :notice => "User deleted successfully."} )
   end
+
+  def current_user_can_view_details?(user)
+    @the_user = User.where(:username => params.fetch("username")).first
+    return true if current_user.id == @the_user.id
+    return true if @the_user.private == false
+    return true if @the_user.private == true && current_user.follow_sent.where(:status => "accepted", :recipient_id => @this_user.id).present?
+
+  end
 end
