@@ -1,76 +1,57 @@
 class UsersController < ApplicationController
+  skip_before_action(:authenticate_user!, {:only => [:index]})
+  #index
   def index
-    matching_users = User.all
-
-    @list_of_users = matching_users.order({ :created_at => :desc })
-
-    render({ :template => "users/index" })
-  end
-
-  def show
-    the_id = params.fetch("path_id")
-
-    matching_users = User.where({ :id => the_id })
-
-    @the_user = matching_users.at(0)
-
-    render({ :template => "users/show" })
-  end
-
-  def create
-    the_user = User.new
-    the_user.comments_count = params.fetch("query_comments_count")
-    the_user.encrypted_password = params.fetch("query_encrypted_password")
-    the_user.likes_count = params.fetch("query_likes_count")
-    the_user.private = params.fetch("query_private", false)
-    the_user.remember_created_at = params.fetch("query_remember_created_at")
-    the_user.reset_password_sent_at = params.fetch("query_reset_password_sent_at")
-    the_user.reset_password_token = params.fetch("query_reset_password_token")
-    the_user.username = params.fetch("query_username")
-
-    if the_user.valid?
-      the_user.save
-      redirect_to("/users", { :notice => "User created successfully." })
+    @this_user = current_user
+  
+    if @this_user.nil?
+      redirect_to new_user_session_path, alert: "You need to sign in to view this page."
     else
-      redirect_to("/users", { :alert => the_user.errors.full_messages.to_sentence })
+      render template: "users/index"
     end
   end
 
-  def update
-    the_id = params.fetch("path_id")
-    the_user = User.where({ :id => the_id }).at(0)
+    def profile
+      @this_user = User.where(:username => params.fetch("username")).first
+      
+      if current_user_can_view_details?(@this_user)
+        render({:template => "users/profile"})
+      else
+          redirect_to("/users", {:notice => "You are not authorized to do that!" })
+        end
+    end 
+    
+    def liked_photos
+      @this_user = User.where(:username => params.fetch("username")).first
+      render({:template => "users/liked_photos"})
+    end 
+    
+    def feed
+      @this_user = User.where(:username => params.fetch("username")).first
+      @all_leaders = @this_user.follow_sent.where(:status => "accepted").pluck(:recipient_id)
+      @all_leader_photos = Photo.where(owner_id: @all_leaders)
 
-    the_user.comments_count = params.fetch("query_comments_count")
-    the_user.encrypted_password = params.fetch("query_encrypted_password")
-    the_user.likes_count = params.fetch("query_likes_count")
-    the_user.private = params.fetch("query_private", false)
-    the_user.remember_created_at = params.fetch("query_remember_created_at")
-    the_user.reset_password_sent_at = params.fetch("query_reset_password_sent_at")
-    the_user.reset_password_token = params.fetch("query_reset_password_token")
-    the_user.username = params.fetch("query_username")
-
-    if the_user.valid?
-      the_user.save
-      redirect_to("/users/#{the_user.id}", { :notice => "User updated successfully."} )
-    else
-      redirect_to("/users/#{the_user.id}", { :alert => the_user.errors.full_messages.to_sentence })
+      render({:template => "users/feed"})
     end
-  end
 
-  def destroy
-    the_id = params.fetch("path_id")
-    the_user = User.where({ :id => the_id }).at(0)
+    def discover
+      @this_user = User.where(:username => params.fetch("username")).first
+      @all_leaders = User.where(id: @this_user.follow_sent.where(:status => "accepted").pluck(:recipient_id))
+      @all_leader_likes = Like.where(fan_id: @all_leaders.pluck(:id))
+      @all_leader_liked_photos = Photo.where(id: @all_leader_likes.pluck(:photo_id))
 
-    the_user.destroy
+      render({:template => "users/discover"})
+    end 
 
-    redirect_to("/users", { :notice => "User deleted successfully."} )
-  end
+    def current_user_can_view_details?(user)
+      @this_user = User.where(:username => params.fetch("username")).first
+      return true if current_user.id == @this_user.id
+      return true if @this_user.private == false
+      return true if @this_user.private == true && current_user.follow_sent.where(:status => "accepted", :recipient_id => @this_user.id).present?
 
-  def current_user_can_view_details?(user)
-    @the_user = User.where(:username => params.fetch("username")).first
-    return true if current_user.id == @the_user.id
-    return true if @the_user.private == false
-    return true if @the_user.private == true && current_user.follow_sent.where(:status => "accepted", :recipient_id => @this_user.id).present?
+    end
 
-  end
+    def edit
+      render({:template => "devise/registration/edit"})
+    end
 end

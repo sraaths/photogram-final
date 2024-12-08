@@ -1,8 +1,11 @@
 class PhotosController < ApplicationController
-  def index
-    matching_photos = Photo.all
+  skip_before_action(:authenticate_user!, {:only => [:index]})
 
-    @list_of_photos = matching_photos.order({ :created_at => :desc })
+  def index
+
+    public_users = User.where(:private => "false").pluck(:id)
+    public_photos = Photo.where(owner_id: public_users).all
+    @list_of_photos = public_photos.order({ :created_at => :desc })
 
     render({ :template => "photos/index" })
   end
@@ -36,12 +39,12 @@ class PhotosController < ApplicationController
   def update
     the_id = params.fetch("path_id")
     the_photo = Photo.where({ :id => the_id }).at(0)
-
     the_photo.caption = params.fetch("query_caption")
     the_photo.comments_count = params.fetch("query_comments_count")
     the_photo.image = params.fetch("query_image")
     the_photo.likes_count = params.fetch("query_likes_count")
     the_photo.owner_id = params.fetch("query_owner_id")
+    
 
     if the_photo.valid?
       the_photo.save
@@ -56,7 +59,7 @@ class PhotosController < ApplicationController
     the_photo = Photo.where({ :id => the_id }).at(0)
 
     the_photo.destroy
-
-    redirect_to("/photos", { :notice => "Photo deleted successfully."} )
+    
+    redirect_to("/photos", {:notice => "Photo deleted successfully."} )
   end
 end
