@@ -14,9 +14,13 @@
 
 <hr>
 
+
+
+
+
 <% if current_user.present? %>
   <div>
-    <form action="/insert_photo" method = "post" class="form-horizontal" enctype = "multipart/form-data">
+    <form id="new_photo_form" action="/insert_photo" method = "post" class="form-horizontal" enctype = "multipart/form-data">
       <label for="query_image">Image</label>
       <input type="file" name = "query_image" id="query_image" value = "No file chosen" class= "form-control">
       
@@ -28,8 +32,6 @@
       <input type="hidden" name = "query_comments_count" id = "comment_count_field" value = 0>
       <input type="hidden" name = "query_likes_count" id = "likes_count_field" value = 0>
       <input type="hidden" name = "query_owner_id" id = "owner_id_field" value = "<%=current_user.id%>">
-
-      <form action="/insert_photo" method="post" enctype="multipart/form-data">
 
 
       

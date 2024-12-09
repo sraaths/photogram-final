@@ -4,13 +4,13 @@
   <%= devise_error_messages! %>
 
   <div class="field">
-    <label for="user_email">Email</label><br />
-    <input autofocus="autofocus" autocomplete="email" type="email" name="user[email]" id="user_email" value="<%= resource.email %>" />
+    <label for="user_email">Email</label>
+    <input autofocus="autofocus" autocomplete="email" type="email" name="email" id="user_email" value="<%= resource.email %>" >
   </div>
 
   <div class="field">
-    <label for="user_username">Username</label><br />
-    <input type="text" name="user[username]" id="user_username" value="<%= resource.username %>" />
+    <label for="user_username">Username</label>
+    <input type="text" name="username" id="user_username" value="<%= resource.username %>">
   </div>
 
   <div class="field">
@@ -51,4 +51,3 @@
 </div>
 
 <a href="<%= user_path(resource.username) %>">Back</a>
-
