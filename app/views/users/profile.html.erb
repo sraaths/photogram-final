@@ -2,7 +2,7 @@
 
 <dl>
   <dt>Private</dt>
-  <dd><%= @this_user.private ? "Yes" : "No" %></dd>
+  <dd><%= @this_user.private %></dd>
 
 <dt>Followers</dt>
    <dd><%= @this_user.followers.count %></dd>
@@ -45,4 +45,3 @@
     <% end %>
   </table>
 </div>
-

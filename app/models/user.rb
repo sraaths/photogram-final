@@ -3,8 +3,9 @@
 # Table name: users
 #
 #  id                     :bigint           not null, primary key
+#  avatar                 :string
 #  comments_count         :string
-#  email                  :string
+#  email                  :string           default(""), not null
 #  encrypted_password     :string
 #  likes_count            :string
 #  private                :boolean
@@ -23,6 +24,7 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+ 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
          has_many  :comments, class_name: "Comment", foreign_key: "author_id", dependent: :destroy
