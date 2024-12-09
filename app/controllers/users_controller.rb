@@ -10,11 +10,14 @@ class UsersController < ApplicationController
       render template: "users/index"
     end
   end
-
+  
     def profile
       @this_user = User.where(:username => params.fetch("username")).first
       
       if current_user_can_view_details?(@this_user)
+        # Fetch all liked photos from users that @this_user follows
+        all_leader_ids = @this_user.followings.where(follow_requests: { status: "accepted" }).pluck(:id)
+    @all_leader_liked_photos = Photo.joins(:likes).where(likes: { fan_id: all_leader_ids }).distinct
         render({:template => "users/profile"})
       else
           redirect_to("/users", {:notice => "You are not authorized to do that!" })

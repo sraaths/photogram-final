@@ -4,12 +4,12 @@
 
 <div>
   <dl>
-    <dt>Private</dt>
-      <dd><%=@this_user.private%></dd>
+   <dt>Private</dt>
+  <dd><%= @this_user.private ? "Yes" : "No" %></dd>
     <dt>Followers</dt>
-      <dd><%=@this_user.follow_received.where(:status => "accepted").count%></dd>
+      <dd><%=@this_user.received_requests.where(:status => "accepted").count%></dd>
     <dt>Following</dt>
-      <dd><%=@this_user.follow_sent.where(:status => "accepted").count%></dd>
+      <dd><%=@this_user.sent_requests.where(:status => "accepted").count%></dd>
   </dl>
 
 </div>
@@ -49,4 +49,3 @@
     <% end %>
   </table>
 </div>
-
