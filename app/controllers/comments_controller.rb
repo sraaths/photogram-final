@@ -1,5 +1,24 @@
 class CommentsController < ApplicationController
+  
+  def index
+    matching_comments = Comment.all
 
+    @list_of_comments = matching_comments.order({ :created_at => :desc })
+
+    render({ :template => "comments/index" })
+  end
+
+  def show
+    the_id = params.fetch("path_id")
+
+    matching_comments = Comment.where({ :id => the_id })
+
+    @the_comment = matching_comments.at(0)
+
+    render({ :template => "comments/show" })
+  end
+
+  
   def create
     the_comment = Comment.new
     the_comment.body = params.fetch("query_body")
