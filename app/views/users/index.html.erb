@@ -22,8 +22,8 @@
       <%end%>
     
       <% if current_user.present? %>
-        <% leader = current_user.follow_sent.where(:status => "accepted", :recipient_id => each_user.id).first %>
-        <% pending_leader = current_user.follow_sent.where(:status => "pending", :recipient_id => each_user.id).first %>
+        <% leader = current_user.sent_requests.where(:status => "accepted", :recipient_id => each_user.id).first %>
+        <% pending_leader = current_user.sent_requests.where(:status => "pending", :recipient_id => each_user.id).first %>
 
         <% if leader.present?%>
           <td><a href="/delete_follow_request/<%=leader.id%>">Unfollow</a></td>
@@ -69,9 +69,9 @@ liked_photos
     <dt>Private</dt>
       <dd><%=@this_user.private%></dd>
     <dt>Followers</dt>
-      <dd><%=@this_user.follow_received.where(:status => "accepted").count%></dd>
+      <dd><%=@this_user.received_requests.where(:status => "accepted").count%></dd>
     <dt>Following</dt>
-      <dd><%=@this_user.follow_sent.where(:status => "accepted").count%></dd>
+      <dd><%=@this_user.sent_requests.where(:status => "accepted").count%></dd>
   </dl>
 
 </div>

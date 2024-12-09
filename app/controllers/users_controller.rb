@@ -28,7 +28,7 @@ class UsersController < ApplicationController
     
     def feed
       @this_user = User.where(:username => params.fetch("username")).first
-      @all_leaders = @this_user.follow_sent.where(:status => "accepted").pluck(:recipient_id)
+      @all_leaders = @this_user.sent_requests.where(:status => "accepted").pluck(:recipient_id)
       @all_leader_photos = Photo.where(owner_id: @all_leaders)
 
       render({:template => "users/feed"})
@@ -36,7 +36,7 @@ class UsersController < ApplicationController
 
     def discover
       @this_user = User.where(:username => params.fetch("username")).first
-      @all_leaders = User.where(id: @this_user.follow_sent.where(:status => "accepted").pluck(:recipient_id))
+      @all_leaders = User.where(id: @this_user.sent_requests.where(:status => "accepted").pluck(:recipient_id))
       @all_leader_likes = Like.where(fan_id: @all_leaders.pluck(:id))
       @all_leader_liked_photos = Photo.where(id: @all_leader_likes.pluck(:photo_id))
 
@@ -47,7 +47,7 @@ class UsersController < ApplicationController
       @this_user = User.where(:username => params.fetch("username")).first
       return true if current_user.id == @this_user.id
       return true if @this_user.private == false
-      return true if @this_user.private == true && current_user.follow_sent.where(:status => "accepted", :recipient_id => @this_user.id).present?
+      return true if @this_user.private == true && current_user.sent_requests.where(:status => "accepted", :recipient_id => @this_user.id).present?
 
     end
 

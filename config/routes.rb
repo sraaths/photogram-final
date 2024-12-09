@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   root to: "users#index"
   devise_for :users
-get("/")
+
 #user
 get("/users", { :controller => "users", :action => "index"})
 post("/users/edit", { :controller => "users", :action => "edit"})

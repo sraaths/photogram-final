@@ -1,12 +1,13 @@
-<h1><%= @this_user.username %>'s Profile</h1>
+<h1><%= @this_user.username %>'s</h1>
 
 <dl>
   <dt>Private</dt>
   <dd><%= @this_user.private ? "Yes" : "No" %></dd>
 
-  <dt>Followers</dt>
-  <dd><%= @this_user.followers.count %></dd>
+<dt>Followers</dt>
+   <dd><%= @this_user.followers.count %></dd>
 
   <dt>Following</dt>
   <dd><%= @this_user.followings.count %></dd>
+ 
 </dl>
